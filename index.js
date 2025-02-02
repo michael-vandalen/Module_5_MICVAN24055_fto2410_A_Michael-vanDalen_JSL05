@@ -37,27 +37,57 @@ const guardians = {
 };
 
 // Function to generate playlist based on preferred genre
-return Object.entries(guardians).map(([guardian, genre]) => ({
-  guardian,
-  playlist: songs.filter((song) => song.genre === genre), // Filter songs by genre
-}));
+function generatePlaylist(guardians, songs) {
+  return Object.entries(guardians).map(([guardian, genre]) => ({
+    guardian,
+    playlist: songs.filter((song) => song.genre === genre), // Filter songs by genre
+  }));
+}
 
+// Function to display the playlists dynamically (without innerHTML)
 function displayPlaylists(playlists) {
   const playlistsDiv = document.getElementById("playlists");
-  playlistsDiv.innerHTML = "";
+  playlistsDiv.innerHTML = ""; // Clear previous content
 
   playlists.forEach(({ guardian, playlist }) => {
-    //Create playlist container
+    // Create playlist container
     const playlistContainer = document.createElement("div");
     playlistContainer.classList.add("playlist");
 
-    // Create Guardian Name Header
-    const guardianName = document.createElement("h2");
-    guardianName.classList.add("guardian-name");
-    guardianName.textContent = `${guardianName}'s Playlist`;
-    playlistContainer.appendChild(guardianName);
+    // Create and append Guardian's name
+    const guradianName = document.createElement("h2");
+    guradianName.classList.add("guardian-name");
+    guradianName.textContent = `${guardian}'s Playlist`;
+    playlistContainer.appendChild(guradianName);
+
+    // Create song list
+    const songList = document.createElement("ul");
+    songList.style.listStyle = "none";
+
+    // Add each song to the list
+    playlist.forEach((song) => {
+      const songItem = document.createElement("li");
+      songItem.classList.add("song");
+
+      const songTitle = document.createElement("span");
+      songTitle.classList.add("song-title");
+      songTitle.textContent = song.title;
+
+      const songArtist = document.createElement("span");
+      songArtist.textContent = ` by ${song.artist}`;
+
+      songItem.appendChild(songTitle);
+      songItem.appendChild(songArtist);
+      songList.appendChild(songItem);
+    });
+
+    playlistContainer.appendChild(songList);
+    playlistsDiv.appendChild(playlistContainer);
   });
 }
 
-// Call generatePlaylist and display the playlists for each Guardian
-generatePlaylist(guardians, songs);
+// Generate playlists and display them when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+  const playlists = generatePlaylist(guardians, songs);
+  displayPlaylists(playlists);
+});
